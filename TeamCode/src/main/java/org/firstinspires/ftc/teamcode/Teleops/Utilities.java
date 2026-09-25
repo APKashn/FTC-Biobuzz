@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.Teleops;
 
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.limelightvision.LLResult;
 
 public class Utilities {
 
@@ -11,12 +15,22 @@ public class Utilities {
 
     private ElapsedTime driveTimer = new ElapsedTime();
 
+    private Limelight3A limelight;
+    int currentPipeline = 2; // 2 = red
+    private final double DEAD_ZONE_DEG = 1.0;
+
     public void init(HardwareMap hwMap, String autoState ) {
         FrontLeft = hwMap.get(DcMotor.class, "front_left");
         FrontRight = hwMap.get(DcMotor.class, "front_right");
         BackLeft = hwMap.get(DcMotor.class, "back_left");
         BackRight = hwMap.get(DcMotor.class, "back_right");
         Intake = hwMap.get(DcMotor.class, "Intake");
+
+
+        limelight = hwMap.get(Limelight3A.class, "limelight");
+
+        limelight.pipelineSwitch(currentPipeline);
+        limelight.start();
 
 
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -58,6 +72,25 @@ public class Utilities {
 
     public void Setintake(double speed) {
         Intake.setPower(speed);
+    }
+
+    public boolean IsAligned() {
+        LLResult result = limelight.getLatestResult();
+
+        double tx = result.getTx();
+
+        if(Math.abs(tx) < DEAD_ZONE_DEG && result.isValid()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public double TX() {
+        LLResult result = limelight.getLatestResult();
+
+        return result.getTx();
+
     }
 
 }
