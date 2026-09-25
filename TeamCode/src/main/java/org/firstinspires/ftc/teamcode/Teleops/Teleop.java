@@ -25,17 +25,18 @@ public class Teleop extends OpMode {
         strafe = gamepad1.left_stick_x;
         rotate = gamepad1.right_stick_x;
 
-        speed = 1.0; //full
+        speed = 1.0; // full
 
-        utils.drive(forward,strafe,rotate,speed);
+        utils.drive(forward, strafe, rotate, speed);
 
-        if(gamepad1.left_trigger >0.1) {
-            utils.Setintake(1);
-        } else{utils.Setintake(0);}
-
-        if(gamepad1.right_trigger >0.1) {
-            utils.Setintake(-1);
-        } else{utils.Setintake(0);}
+        // Combine into a single conditional block:
+        if (gamepad1.left_trigger > 0.1) {
+            utils.Setintake(1.0);
+        } else if (gamepad1.right_trigger > 0.1) {
+            utils.Setintake(-1.0);
+        } else {
+            utils.Setintake(0.0); // Only stop if NEITHER trigger is pressed
+        }
     }
 
     @Override
