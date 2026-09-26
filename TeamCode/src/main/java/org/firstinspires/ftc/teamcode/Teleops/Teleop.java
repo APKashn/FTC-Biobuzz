@@ -7,15 +7,40 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp
 public class Teleop extends OpMode {
     double forward, strafe, rotate, speed;
-    double kP = 0.026;
+    double kP = 0.026;  //autotracking tune value
+
+    private boolean initprevup = false;
+    private boolean initprevdown = false;
 
     Utilities utils = new Utilities();
 
     @Override
     public void init() {
         utils.init(hardwareMap, "FALSE");
-        telemetry.addLine("Press start");
+
+    }
+
+    public void init_loop() {
+        boolean upPressed = gamepad1.dpad_up && !initprevup;
+        boolean downPressed = gamepad1.dpad_down && !initprevdown;
+
+        // select alliance color menu in init
+        initprevup = gamepad1.dpad_up;
+        initprevdown = gamepad1.dpad_down;
+        String selection = "";
+        telemetry.addLine("Select Alliance Color:");
+        telemetry.addLine("\n---> DPAD_UP = RED");
+        telemetry.addLine("---> DPAD_DOWN = BLUE");
+        if (utils.getCurrentPipeline() == 2) {
+            selection = "RED";
+        } else {
+            selection = "BLUE";
+        }
+
+        telemetry.addData("\nCURRENT SELECTION:", selection);
+
         telemetry.update();
+        utils.updatePipelineMenu(upPressed, downPressed);
     }
 
     @Override
@@ -28,7 +53,7 @@ public class Teleop extends OpMode {
 
         if (gamepad1.left_trigger > 0.1) { // intake
 
-            utils.Setintake(0.6);
+            utils.Setintake(0.7);
 
         } else if (gamepad1.right_trigger > 0.1) { // outtake / auto-align
             if (utils.IsAligned()) {
@@ -36,7 +61,7 @@ public class Teleop extends OpMode {
             } else {
                 if(utils.TX() == 0)
                 {
-                    rotate = 60 * kP;
+                    rotate = gamepad1.right_stick_x * 2.25; //60 * kP
 
                 } else {
                     rotate = utils.TX() * kP;

@@ -17,7 +17,7 @@ public class Utilities {
 
     private Limelight3A limelight;
     int currentPipeline = 2; // 2 = red
-    private final double DEAD_ZONE_DEG = 1.0;
+    private final double DEAD_ZONE_DEG = 2.0;
 
     public void init(HardwareMap hwMap, String autoState ) {
         FrontLeft = hwMap.get(DcMotor.class, "front_left");
@@ -91,6 +91,34 @@ public class Utilities {
 
         return result.getTx();
 
+    }
+
+    public void SetPipeline(int selection) {
+        limelight.pipelineSwitch(selection);
+    }
+    public void updatePipelineMenu(boolean dpadUp, boolean dpadDown) {
+
+        int selectedPipeline = currentPipeline;
+
+        if (dpadUp) {
+            selectedPipeline = 2;
+        }
+        else if (dpadDown) {
+            selectedPipeline = 3;
+        }
+
+        if (selectedPipeline != currentPipeline) {
+            currentPipeline = selectedPipeline;
+            limelight.pipelineSwitch(currentPipeline);
+        }
+    }
+    public int getCurrentPipeline() {
+        if (currentPipeline == 2) {
+            return 2;
+        } else if (currentPipeline == 3) {
+            return 3;
+        }
+        return -1;
     }
 
 }
