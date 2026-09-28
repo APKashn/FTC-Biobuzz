@@ -3,16 +3,21 @@ package org.firstinspires.ftc.teamcode.Teleops;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
 public class Utilities {
 
-    private DcMotor FrontLeft, FrontRight, BackLeft, BackRight, Intake;
+    private DcMotor FrontLeft, FrontRight, BackLeft, BackRight, Intake, Shooter1, Shooter2;
+    private CRServo HFeeder1,HFeeder2;
 
+    private Servo Feeder;
     private ElapsedTime driveTimer = new ElapsedTime();
 
     private Limelight3A limelight;
@@ -26,6 +31,13 @@ public class Utilities {
         BackRight = hwMap.get(DcMotor.class, "back_right");
         Intake = hwMap.get(DcMotor.class, "Intake");
 
+        Shooter1 = hwMap.get(DcMotor.class, "Shooter1");
+        Shooter2 = hwMap.get(DcMotor.class, "Shooter2");
+
+        Feeder = hwMap.get(Servo.class, "Feeder");
+
+        HFeeder1 = hwMap.get(CRServo.class, "Hfeeder1");
+        HFeeder2 = hwMap.get(CRServo.class, "Hfeeder2");
 
         limelight = hwMap.get(Limelight3A.class, "limelight");
 
@@ -119,6 +131,24 @@ public class Utilities {
             return 3;
         }
         return -1;
+    }
+
+    public void SetTurrets(double power) {
+        Shooter1.setPower(power);
+        //Shooter2.setPower(power);
+    }
+
+    public void SetFeeder(double power) {
+        HFeeder1.setPower(power);
+        HFeeder2.setPower(-power);
+    }
+
+    public void SetGate(double pos) {
+        Feeder.setPosition(pos);
+    }
+
+    public double GetGate() {
+        return Feeder.getPosition();
     }
 
 }
