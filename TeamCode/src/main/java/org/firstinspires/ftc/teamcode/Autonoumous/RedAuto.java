@@ -53,12 +53,16 @@ public class RedAuto extends OpMode {
                 break;
 
             case FIRST_SHOOT:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1.5 ){
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.5 ){
+                    follower.followPath(FirstShoot_PreGetPollen, true);
+                    setPathState(PathState.PRE_GET_POLLEN);
                     telemetry.addLine("Went to Shooting Position");
                 }
                 break;
 
             case PRE_GET_POLLEN:
+                follower.followPath(PreGetPollen_GetPollen, true);
+                setPathState(PathState.GET_POLLEN);
                 if (!follower.isBusy()) {
                     telemetry.addLine("About to get el pollen");
                 }
@@ -103,7 +107,7 @@ public class RedAuto extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        startPathUpdate();
+        statePathUpdate();
     }
 }
 
