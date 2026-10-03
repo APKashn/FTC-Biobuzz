@@ -1,21 +1,27 @@
 package org.firstinspires.ftc.teamcode.Teleops;
 
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
 public class Utilities {
 
-    private DcMotor FrontLeft, FrontRight, BackLeft, BackRight, Intake, Shooter1, Shooter2;
+    private DcMotor FrontLeft, FrontRight, BackLeft, BackRight, Intake, Shooter2;
     private CRServo HFeeder1,HFeeder2;
+    private DcMotorEx Shooter1;
 
     private Servo Feeder;
     private ElapsedTime driveTimer = new ElapsedTime();
@@ -31,8 +37,14 @@ public class Utilities {
         BackRight = hwMap.get(DcMotor.class, "back_right");
         Intake = hwMap.get(DcMotor.class, "Intake");
 
-        Shooter1 = hwMap.get(DcMotor.class, "Shooter1");
+        Shooter1 = hwMap.get(DcMotorEx.class, "Shooter1");
+        PIDFCoefficients pidfCoefficients =
+                new PIDFCoefficients(4.4, 0, 0, 16.6);  //Might change later with tweaks
+        Shooter1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
         Shooter2 = hwMap.get(DcMotor.class, "Shooter2");
+
+
 
         Feeder = hwMap.get(Servo.class, "Feeder");
 
@@ -147,8 +159,8 @@ public class Utilities {
         Feeder.setPosition(pos);
     }
 
-    public double GetGate() {
-        return Feeder.getPosition();
+    public void SetShooterVelocity(double velocity) {
+        Shooter1.setVelocity(velocity);
     }
 
 }

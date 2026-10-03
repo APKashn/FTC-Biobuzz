@@ -52,39 +52,46 @@ public class Teleop extends OpMode {
         strafe  = gamepad1.left_stick_x;
         rotate  = gamepad1.right_stick_x;
         speed   = 1.0; // full speed default
-        //utils.SetTurrets(0.47); //Turret ON
+        utils.SetShooterVelocity(1000); //Turret ON
+
 
         if (gamepad1.left_trigger > 0.1) { // intake
             utils.Setintake(0.7);
             //utils.SetFeeder(-1.0);
             //utils.SetGate(0.07);
 
+        } else if(gamepad1.right_bumper) {
+            utils.Setintake(-0.7);
         } else if (gamepad1.right_trigger > 0.1) { // outtake / auto-align
+
+
+
             utils.SetGate(0.7);
 
-            if(Math.abs(utils.GetGate() - 0.7) < 0.05) {
             utils.SetFeeder(1.0);
 
 
             if (utils.IsAligned()) {
                 rotate = 0.0; // Stay still if aligned
 
-                utils.SetTurrets(0.5); //Turret ON
                 //utils.Setintake(0.7);   //  Push elements up
-            } else {
-                utils.Setintake(0.0);
 
-            }
-            } else {
-                if(utils.TX() == 0)
+
+
+
+
+            } else {utils.Setintake(0.0);}
+
+
+                if(utils.TX() == 0) //Completely off
                 {
                     rotate = gamepad1.right_stick_x * 2.25; //60 * kP
 
                 } else {
-                    rotate = utils.TX() * kP;
+                    rotate = utils.TX() * kP;  //In sight
                 }
                 rotate = Math.max(-0.4, Math.min(0.4, rotate)); //turn
-            }
+
         } else {
             utils.Setintake(0.0);
             utils.SetFeeder(0.0);
