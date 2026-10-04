@@ -1,15 +1,19 @@
 package org.firstinspires.ftc.teamcode.Teleops;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
 @TeleOp
-public class Teleop extends OpMode {
+public class AFStuner extends OpMode {
     double forward, strafe, rotate, speed;
     double kP = 0.026;  //autotracking tune value
+    private boolean prevDpadUp = false;
+    private boolean prevDpadDown = false;
+
+    private boolean prevDpadLeft = false;
+    private boolean prevDpadRight = false;
+    double[] stepSizes = {50.0,10.0, 1.0, 0.1, 0.01};
+    int stepIndex = 1;
 
     private boolean initprevup = false;
     private boolean initprevdown = false;
@@ -50,6 +54,12 @@ public class Teleop extends OpMode {
     @Override
     public void loop() {
         double Velocity = 1000;
+
+        if(gamepad1.dpad_up) {
+            Velocity += 10;
+        }
+
+
         forward = gamepad1.left_stick_y;
         strafe  = gamepad1.left_stick_x;
         rotate  = gamepad1.right_stick_x;
@@ -69,11 +79,11 @@ public class Teleop extends OpMode {
 
             //if(utils.isTurretAtSpeed(Velocity)) {
 
-                utils.SetGate(0.7);
+            utils.SetGate(0.7);
 
-                utils.SetFeeder(1.0);
+            utils.SetFeeder(1.0);
 
-           // }
+            // }
             if (utils.IsAligned()) {
                 rotate = 0.0; // Stay still if aligned
 
@@ -81,14 +91,14 @@ public class Teleop extends OpMode {
             } else {utils.Setintake(0.0);}
 
 
-                if(utils.TX() == 0) //Completely off
-                {
-                    rotate = gamepad1.right_stick_x * 2.25; //60 * kP
+            if(utils.TX() == 0) //Completely off
+            {
+                rotate = gamepad1.right_stick_x * 2.25; //60 * kP
 
-                } else {
-                    rotate = utils.TX() * kP;  //In sight
-                }
-                rotate = Math.max(-0.4, Math.min(0.4, rotate)); //turn
+            } else {
+                rotate = utils.TX() * kP;  //In sight
+            }
+            rotate = Math.max(-0.4, Math.min(0.4, rotate)); //turn
 
         } else {
             utils.Setintake(0.0);
@@ -98,11 +108,32 @@ public class Teleop extends OpMode {
 
         utils.drive(forward, strafe, rotate, speed);
 
+        if (gamepad1.bWasPressed()) {
+            stepIndex = (stepIndex + 1) % stepSizes.length;
+        }
+
+        if (gamepad1.dpad_up && !prevDpadUp) {
+            Velocity +=stepSizes[stepIndex];
+            utils.SetShooterVelocity(Velocity);
+        }
+        if (gamepad1.dpad_down && !prevDpadDown) {
+            Velocity +=stepSizes[stepIndex];
+            utils.SetShooterVelocity(Velocity);
+
+        }
+
+
+        prevDpadUp = gamepad1.dpad_up;
+        prevDpadDown = gamepad1.dpad_down;
+        prevDpadLeft = gamepad1.dpad_left;
+        prevDpadRight = gamepad1.dpad_right;
+
         //Telemetry updates
 
-        telemetry.addData("tx:", utils.TX());
-        telemetry.addData("aligned?:", utils.IsAligned());
+        //telemetry.addData("tx:", utils.TX());
+        //telemetry.addData("aligned?:", utils.IsAligned());
         telemetry.addData("Distance:", utils.GetDistance());
+        telemetry.addData("Velocity:", Velocity);
         telemetry.update();
     }
 

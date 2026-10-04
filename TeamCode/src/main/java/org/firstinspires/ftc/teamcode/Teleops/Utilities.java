@@ -150,6 +150,30 @@ public class Utilities {
         //Shooter2.setPower(power);
     }
 
+    public double GetDistance() {
+        LLResult result = limelight.getLatestResult();
+        double h1 = 6.5; // Camera height in inches
+        double h2 = 50.25; // Target AprilTag height in inches
+        double a1 = Math.toRadians(63.43); // Camera mounting angle converted to radians
+        //63.43
+        // Get ty from Limelight NetworkTables and convert to radians
+        double ty = result.getTy();
+        double a2 = Math.toRadians(ty);
+
+        // Calculate distance
+        double distance = (h2 - h1) / Math.tan(a1 + a2);
+        return distance;
+    }
+
+    public boolean isTurretAtSpeed(double velocity) {
+
+        return Math.abs(getTurretVelocity() - velocity) < 40;
+    }
+
+    public double getTurretVelocity() {
+        return Shooter1.getVelocity();
+    }
+
     public void SetFeeder(double power) {
         HFeeder1.setPower(power);
         HFeeder2.setPower(-power);
