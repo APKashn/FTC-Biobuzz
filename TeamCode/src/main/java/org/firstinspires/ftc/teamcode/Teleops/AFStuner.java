@@ -9,9 +9,9 @@ public class AFStuner extends OpMode {
     double kP = 0.026;  //autotracking tune value
     private boolean prevDpadUp = false;
     private boolean prevDpadDown = false;
+    double Velocity = 1000;
 
-    private boolean prevDpadLeft = false;
-    private boolean prevDpadRight = false;
+
     double[] stepSizes = {50.0,10.0, 1.0, 0.1, 0.01};
     int stepIndex = 1;
 
@@ -53,11 +53,7 @@ public class AFStuner extends OpMode {
 
     @Override
     public void loop() {
-        double Velocity = 1000;
 
-        if(gamepad1.dpad_up) {
-            Velocity += 10;
-        }
 
 
         forward = gamepad1.left_stick_y;
@@ -117,7 +113,7 @@ public class AFStuner extends OpMode {
             utils.SetShooterVelocity(Velocity);
         }
         if (gamepad1.dpad_down && !prevDpadDown) {
-            Velocity +=stepSizes[stepIndex];
+            Velocity -=stepSizes[stepIndex];
             utils.SetShooterVelocity(Velocity);
 
         }
@@ -125,15 +121,15 @@ public class AFStuner extends OpMode {
 
         prevDpadUp = gamepad1.dpad_up;
         prevDpadDown = gamepad1.dpad_down;
-        prevDpadLeft = gamepad1.dpad_left;
-        prevDpadRight = gamepad1.dpad_right;
+
 
         //Telemetry updates
 
         //telemetry.addData("tx:", utils.TX());
         //telemetry.addData("aligned?:", utils.IsAligned());
-        telemetry.addData("Distance:", utils.GetDistance());
-        telemetry.addData("Velocity:", Velocity);
+        telemetry.addData("Distance(X):" ,"%.2f", utils.GetDistance());
+        telemetry.addData("Velocity(Y):", Velocity);
+        telemetry.addData("Stepsize:", stepSizes[stepIndex]);
         telemetry.update();
     }
 

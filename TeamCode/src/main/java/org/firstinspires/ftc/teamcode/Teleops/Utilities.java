@@ -23,7 +23,7 @@ public class Utilities {
     private CRServo HFeeder1,HFeeder2;
     private DcMotorEx Shooter1;
 
-    private Servo Feeder;
+    private Servo Feeder, FrontalSweep;
     private ElapsedTime driveTimer = new ElapsedTime();
 
     private Limelight3A limelight;
@@ -36,34 +36,34 @@ public class Utilities {
         BackLeft = hwMap.get(DcMotor.class, "back_left");
         BackRight = hwMap.get(DcMotor.class, "back_right");
         Intake = hwMap.get(DcMotor.class, "Intake");
-
         Shooter1 = hwMap.get(DcMotorEx.class, "Shooter1");
         PIDFCoefficients pidfCoefficients =
                 new PIDFCoefficients(4.4, 0, 0, 16.6);  //Might change later with tweaks
         Shooter1.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-
         Shooter2 = hwMap.get(DcMotor.class, "Shooter2");
-
-
+        //-----------------------------------------------------------
 
         Feeder = hwMap.get(Servo.class, "Feeder");
+        //FrontalSweep = hwMap.get(Servo.class, "FrontalSweep");
 
+        //-----------------------------------------------------------
         HFeeder1 = hwMap.get(CRServo.class, "Hfeeder1");
         HFeeder2 = hwMap.get(CRServo.class, "Hfeeder2");
+        //-----------------------------------------------------------
 
         limelight = hwMap.get(Limelight3A.class, "limelight");
-
         limelight.pipelineSwitch(currentPipeline);
         limelight.start();
+        //-----------------------------------------------------------
 
 
         FrontRight.setDirection(DcMotor.Direction.REVERSE);
         BackRight.setDirection(DcMotor.Direction.REVERSE);
-
         FrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         FrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -182,6 +182,8 @@ public class Utilities {
     public void SetGate(double pos) {
         Feeder.setPosition(pos);
     }
+
+    //public void SetSweep(double pos) {FrontalSweep.setPosition(pos);}
 
     public void SetShooterVelocity(double velocity) {
         Shooter1.setVelocity(velocity);
