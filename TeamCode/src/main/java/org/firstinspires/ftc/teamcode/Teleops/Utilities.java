@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+
 public class Utilities {
 
     private DcMotor FrontLeft, FrontRight, BackLeft, BackRight, Intake, Shooter2;
@@ -164,7 +166,24 @@ public class Utilities {
         double distance = (h2 - h1) / Math.tan(a1 + a2);
         return distance;
     }
+    public double yawerror() {
+        LLResult result = limelight.getLatestResult();
 
+        if (result != null && result.isValid()) {
+            Pose3D botpose = result.getBotpose();
+
+            // Extract Position (Translational Offsets in meters)
+            double xOffset = botpose.getPosition().x; // Lateral offset (Left/Right)
+            double yDistance = botpose.getPosition().y; // Distance to tag (Forward/Back)
+
+            // Extract Orientation (Yaw Angle in degrees or radians)
+            double yawDegrees = botpose.getOrientation().getYaw();
+
+            // Check alignment even if tx == 0
+            return yawDegrees;
+        }
+        return 0;
+    }
     public boolean isTurretAtSpeed(double velocity) {
 
         return Math.abs(getTurretVelocity() - velocity) < 40;
@@ -178,6 +197,7 @@ public class Utilities {
         HFeeder1.setPower(power);
         HFeeder2.setPower(-power);
     }
+
 
     public void SetGate(double pos) {
         Feeder.setPosition(pos);

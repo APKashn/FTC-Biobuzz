@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Teleops;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -53,6 +54,7 @@ public class Teleop extends OpMode {
     public void loop() {
         double Velocity = 1000;
         double x = utils.GetDistance();
+        double yr = utils.yawerror();
         forward = gamepad1.left_stick_y;
         strafe  = gamepad1.left_stick_x;
         rotate  = gamepad1.right_stick_x;
@@ -65,7 +67,7 @@ public class Teleop extends OpMode {
                             - 68.62971 * x * x
                             + 1707.13647 * x
                             - 15008.5014,
-                    860, 930
+                    916, 1000
             );
 
             utils.SetShooterVelocity(Velocity); //Turret power
@@ -79,35 +81,32 @@ public class Teleop extends OpMode {
             //utils.SetFeeder(-1.0);
             //utils.SetGate(0.07);
 
-        } else if(gamepad1.right_bumper) {
-            utils.Setintake(-0.7);
         } else if(gamepad1.left_bumper) {
-            utils.Setintake(0.4);
-        } else if (gamepad1.right_trigger > 0.1) { // outtake / auto-align
 
-            //if(utils.isTurretAtSpeed(Velocity)) {
+            utils.Setintake(-0.4); //remove pollen
 
-                utils.SetGate(0.7);
+        } else if (gamepad1.right_trigger > 0.1) {
 
-                utils.SetFeeder(1.0);
+            utils.SetGate(0.7);
+            utils.SetFeeder(1.0);
 
-           // }
+            if (gamepad1.left_trigger > 0.1 && utils.isTurretAtSpeed(Velocity)) {
+                utils.Setintake(0.7);
+            } else {
+                utils.Setintake(0.0);
+            }
+
             if (utils.IsAligned()) {
-                rotate = 0.0; // Stay still if aligned
-
-                //utils.Setintake(0.7);   //  Push elements up
-            } else {utils.Setintake(0.0);}
-
-
-                if(utils.TX() == 0) //Completely off
-                {
-                    rotate = gamepad1.right_stick_x * 2.25; //60 * kP
-
+                rotate = 0.0;
+            } else {
+                if (utils.TX() == 0) {
+                    rotate = gamepad1.right_stick_x * 2.25;
                 } else {
-                    rotate = utils.TX() * kP;  //In sight
+                    rotate = utils.TX() * kP;
                 }
-                rotate = Math.max(-0.4, Math.min(0.4, rotate)); //turn
 
+                rotate = Math.max(-0.4, Math.min(0.4, rotate));
+            }
         } else {
             utils.Setintake(0.0);
             utils.SetFeeder(0.0);
@@ -121,6 +120,11 @@ public class Teleop extends OpMode {
         telemetry.addData("tx:", utils.TX());
         telemetry.addData("aligned?:", utils.IsAligned());
         telemetry.addData("Distance:", utils.GetDistance());
+        telemetry.addData("yawerror:", yr);
+
+       //    telemetry.addData("Target Velocity", Velocity);
+        telemetry.addData("is turret at speed?", utils.isTurretAtSpeed(Velocity));
+        telemetry.addData("Actual Velocity", utils.getTurretVelocity());
         telemetry.update();
     }
 
