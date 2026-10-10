@@ -14,7 +14,10 @@ public class Teleop extends OpMode {
     double kP = 0.026;  //autotracking tune value
 
     private boolean initprevup = false;
+    double Velocity = 1000;
+
     private boolean initprevdown = false;
+    boolean Undertempo;
 
     Utilities utils = new Utilities();
 
@@ -52,9 +55,8 @@ public class Teleop extends OpMode {
 
     @Override
     public void loop() {
-        double Velocity = 1000;
         double x = utils.GetDistance();
-        double yr = utils.yawerror();
+       // double yr = utils.yawerror();
         forward = gamepad1.left_stick_y;
         strafe  = gamepad1.left_stick_x;
         rotate  = gamepad1.right_stick_x;
@@ -113,6 +115,9 @@ public class Teleop extends OpMode {
             utils.SetGate(0.07);
         }
 
+        if(utils.getTurretVelocity() < Velocity) {
+            Undertempo = true;
+        } else {Undertempo = false;}
         utils.drive(forward, strafe, rotate, speed);
 
         //Telemetry updates
@@ -120,11 +125,10 @@ public class Teleop extends OpMode {
         telemetry.addData("tx:", utils.TX());
         telemetry.addData("aligned?:", utils.IsAligned());
         telemetry.addData("Distance:", utils.GetDistance());
-        telemetry.addData("yawerror:", yr);
 
-       //    telemetry.addData("Target Velocity", Velocity);
-        telemetry.addData("is turret at speed?", utils.isTurretAtSpeed(Velocity));
+        telemetry.addData("Commanded Velocity:", Velocity);
         telemetry.addData("Actual Velocity", utils.getTurretVelocity());
+        telemetry.addData("Running low:", Undertempo);
         telemetry.update();
     }
 

@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Teleops;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
+@Disabled
 public class AFStuner extends OpMode {
     double forward, strafe, rotate, speed;
     double kP = 0.026;  //autotracking tune value

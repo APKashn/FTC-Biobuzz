@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 /*
 https://www.youtube.com/watch?v=aPNCpZzCTKg
  */
-
+@Disabled
 @TeleOp
 
 public class TuneFlywheelPF extends OpMode {
